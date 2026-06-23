@@ -59,11 +59,13 @@ export default function App() {
     { time: new Date().toLocaleTimeString(), text: `Device is ${navigator.onLine ? 'online' : 'offline'}. Data stored in localStorage.`, type: 'info' }
   ]);
 
+  const API_BASE = 'https://akudhaent.onrender.com';
+
   useEffect(() => {
-    fetch('/api/health')
-      .then(r => { if (r.ok) setServerAvailable(true); })
+    fetch(`${API_BASE}/api/health`)
+      .then(r => { if (r.ok) { setServerAvailable(true); addLog(`Backend API Live — ${API_BASE}`, 'success'); } })
       .catch(() => {});
-  }, []);
+  }, [addLog]);
 
   const inventory = useInventory(syncedHarvests, syncedBatches, syncedConsignments, offlineQueue);
 
