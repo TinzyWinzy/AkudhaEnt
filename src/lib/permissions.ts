@@ -1,6 +1,13 @@
 import { Role, type RolePermissions, type UserClaims } from '../types/auth';
 import type { HarvesterRecord } from '../types/domain';
 
+export const VISIBLE_TABS: Record<string, string[]> = {
+  [Role.FIELD_COORDINATOR]: ['harvest', 'backlog'],
+  [Role.PROCESSING_ADMIN]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
+  [Role.DISTRIBUTION_MANAGER]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
+  [Role.SUPER_ADMIN]: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
+};
+
 const FULL_ACCESS: RolePermissions = {
   visibleTabs: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
   sourcingFields: {
@@ -107,7 +114,7 @@ export function getRolePermissions(role: Role): RolePermissions {
 }
 
 export function getVisibleTabs(role: Role): string[] {
-  return ROLE_PERMISSIONS[role].visibleTabs;
+  return VISIBLE_TABS[role] ?? [];
 }
 
 export function canSeeField(role: Role, panel: 'sourcing' | 'processing' | 'distribution', field: string): boolean {
@@ -129,7 +136,7 @@ export function canEditField(role: Role, panel: 'sourcing' | 'processing' | 'dis
 export function filterHarvestsByRegion(harvests: HarvesterRecord[], user: UserClaims | null): HarvesterRecord[] {
   if (!user || user.role === Role.SUPER_ADMIN) return harvests;
   if (user.role === Role.FIELD_COORDINATOR && user.region) {
-    return harvests;
+    return harvests.filter(h => h.region === user.region);
   }
   return harvests;
 }

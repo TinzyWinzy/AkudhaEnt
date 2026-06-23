@@ -1,5 +1,6 @@
 import { Database, Layers, Truck, Settings, BookOpen, Brain } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { VISIBLE_TABS } from '../lib/permissions';
 
 export type TabId = 'harvest' | 'process' | 'distribute' | 'diagnostics' | 'backlog' | 'schemas' | 'ai';
 
@@ -13,13 +14,6 @@ const ALL_TABS: { id: TabId; label: string; icon: typeof Database }[] = [
   { id: 'ai', label: 'AI Agents', icon: Brain },
 ];
 
-const VISIBLE_TABS: Record<string, TabId[]> = {
-  field_coordinator: ['harvest', 'backlog'],
-  processing_admin: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  distribution_manager: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  super_admin: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
-};
-
 interface TabNavProps {
   activeTab: TabId;
   onTabChange: (tab: TabId) => void;
@@ -27,7 +21,8 @@ interface TabNavProps {
 
 export function TabNav({ activeTab, onTabChange }: TabNavProps) {
   const { user } = useAuth();
-  const visibleTabs = user ? VISIBLE_TABS[user.role] ?? ALL_TABS.map(t => t.id) : ALL_TABS.map(t => t.id);
+  const defaultTabs = ALL_TABS.map(t => t.id);
+  const visibleTabs = user ? (VISIBLE_TABS[user.role] ?? defaultTabs) : defaultTabs;
   const tabs = ALL_TABS.filter(t => visibleTabs.includes(t.id));
 
   if (tabs.length === 0) return null;

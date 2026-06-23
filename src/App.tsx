@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AlertTriangle, Download, Trash2, BookOpen } from 'lucide-react';
 import { HarvesterRecord, ProcessingBatch, OutboundConsignment, SyncPayload } from './types';
 import { HISTORICAL_HARVESTS, HISTORICAL_BATCHES, HISTORICAL_CONSIGNMENTS } from './initialData';
@@ -8,14 +8,8 @@ import { Header, DashboardCards, TabNav, SourcingPanel, ProcessingPanel, Distrib
 import { AiInsightsPanel } from './components/AiInsightsPanel';
 import { LoginOverlay } from './components/auth';
 import { useAuth } from './hooks/useAuth';
+import { VISIBLE_TABS } from './lib/permissions';
 import type { TabId } from './components';
-
-const VALID_TABS_FOR_ROLE: Record<string, TabId[]> = {
-  field_coordinator: ['harvest', 'backlog'],
-  processing_admin: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  distribution_manager: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  super_admin: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
-};
 
 export default function App() {
   const { user, login } = useAuth();
@@ -23,22 +17,45 @@ export default function App() {
   const [syncedBatches, setSyncedBatches] = useLocalStorage<ProcessingBatch[]>(LOCALSTORAGE_KEYS.SYNCED_BATCHES, HISTORICAL_BATCHES);
   const [syncedConsignments, setSyncedConsignments] = useLocalStorage<OutboundConsignment[]>(LOCALSTORAGE_KEYS.SYNCED_CONSIGNMENTS, HISTORICAL_CONSIGNMENTS);
   const [offlineQueue, setOfflineQueue] = useLocalStorage<SyncPayload[]>(LOCALSTORAGE_KEYS.OFFLINE_QUEUE, []);
-  const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [activeTab, setActiveTab] = useState<TabId>('harvest');
   const [showLogin, setShowLogin] = useState(true);
+  const onlineRef = useRef(isOnline);
 
   useEffect(() => {
     if (user) {
-      const allowed = VALID_TABS_FOR_ROLE[user.role] ?? ['harvest'];
+      const allowed = VISIBLE_TABS[user.role] ?? ['harvest'];
       if (!allowed.includes(activeTab)) {
-        setActiveTab(allowed[0]);
+        setActiveTab(allowed[0] as TabId);
       }
     }
   }, [user, activeTab]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      if (!onlineRef.current) {
+        setIsOnline(true);
+        onlineRef.current = true;
+      }
+    };
+    const handleOffline = () => {
+      if (onlineRef.current) {
+        setIsOnline(false);
+        onlineRef.current = false;
+      }
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const [simulatedDelay, setSimulatedDelay] = useState<number>(DEFAULT_SYNC_DELAY_MS);
   const { logs, addLog } = useLogging([
     { time: new Date().toLocaleTimeString(), text: 'Akudha Agri-Logistics Engine Initialized.', type: 'info' },
-    { time: new Date().toLocaleTimeString(), text: 'Offline-First Service Worker active: IDB cached.', type: 'success' }
+    { time: new Date().toLocaleTimeString(), text: `Device is ${navigator.onLine ? 'online' : 'offline'}. Data stored in localStorage.`, type: 'info' }
   ]);
 
   const inventory = useInventory(syncedHarvests, syncedBatches, syncedConsignments, offlineQueue);

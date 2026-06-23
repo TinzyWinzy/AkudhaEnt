@@ -36,8 +36,8 @@ function computeMovingAverage(values: number[]): number {
  * Uses weather impact, historical sales velocity, and current stock.
  */
 export function recommendDispatch(input: HubInventory): DispatchRecommendation {
-  const avgWeeklySales = computeMovingAverage(input.recentWeeklySales);
-  const weatherMultiplier = WEATHER_IMPACT[input.regionForecastRain.toLowerCase()] ?? 1.0;
+  const avgWeeklySales = computeMovingAverage(input.recentWeeklySales ?? []);
+  const weatherMultiplier = WEATHER_IMPACT[(input.regionForecastRain ?? '').toLowerCase()] ?? 1.0;
   const tempMultiplier = input.regionForecastTemp > 30 ? 1.2 : input.regionForecastTemp > 25 ? 1.1 : 1.0;
 
   const baseQuota = Math.max(avgWeeklySales, 50);
@@ -46,9 +46,10 @@ export function recommendDispatch(input: HubInventory): DispatchRecommendation {
   const perVendorQuota = input.vendorCount > 0 ? Math.round(stockCapped / input.vendorCount) : stockCapped;
   const finalQuota = Math.max(perVendorQuota, 10);
 
+  const sales = input.recentWeeklySales ?? [];
   let confidence: DispatchRecommendation['confidence'] = 'high';
-  if (input.recentWeeklySales.length < 2) confidence = 'low';
-  else if (input.recentWeeklySales.length < 4) confidence = 'medium';
+  if (sales.length < 2) confidence = 'low';
+  else if (sales.length < 4) confidence = 'medium';
 
   const rationale = `Weather: ${input.regionForecastRain} (${weatherMultiplier.toFixed(1)}x), Temp: ${input.regionForecastTemp}°C (${tempMultiplier.toFixed(1)}x), Historical avg: ${avgWeeklySales.toFixed(0)}/wk, Stock: ${input.currentSachetStock}, Vendors: ${input.vendorCount}`;
 

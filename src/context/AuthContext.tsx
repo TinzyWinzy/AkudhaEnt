@@ -1,5 +1,6 @@
 import { createContext, useState, useCallback, type ReactNode } from 'react';
 import { Role, type UserClaims } from '../types/auth';
+import { VISIBLE_TABS } from '../lib/permissions';
 
 export interface AuthContextValue {
   user: UserClaims | null;
@@ -17,13 +18,6 @@ export const AuthContext = createContext<AuthContextValue>({
   hasTabAccess: () => false,
 });
 
-const VISIBLE_TABS: Record<Role, string[]> = {
-  [Role.FIELD_COORDINATOR]: ['harvest', 'backlog'],
-  [Role.PROCESSING_ADMIN]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  [Role.DISTRIBUTION_MANAGER]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  [Role.SUPER_ADMIN]: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserClaims | null>(null);
 
@@ -38,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasTabAccess = useCallback((tabId: string): boolean => {
     if (!user) return false;
     const tabs = VISIBLE_TABS[user.role];
-    return tabs.includes(tabId);
+    return tabs?.includes(tabId) ?? false;
   }, [user]);
 
   return (

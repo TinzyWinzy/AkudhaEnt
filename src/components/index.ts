@@ -9,3 +9,4 @@ export { SyncRegistry } from './SyncRegistry';
 export { PendingBanner } from './PendingBanner';
 export { RegionalAnalytics } from './RegionalAnalytics';
 export { Terminal } from './Terminal';
+export { ErrorBoundary } from './ErrorBoundary';

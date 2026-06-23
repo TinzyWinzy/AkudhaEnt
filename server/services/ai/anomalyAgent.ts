@@ -34,7 +34,7 @@ export function detectAnomaly(input: AnomalyInput): { isAnomalous: boolean; yiel
     ? Math.round((input.sachetCount / input.rawWeightKg) * 100) / 100
     : 0;
 
-  const movingAverage = computeMovingAverage(input.historicalYields);
+  const movingAverage = computeMovingAverage(input.historicalYields ?? []);
   const deviationPercent = movingAverage > 0
     ? Math.round(((yieldRatio - movingAverage) / movingAverage) * 100 * 10) / 10
     : 0;

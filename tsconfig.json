@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "module": "ESNext",
     "lib": [
@@ -10,6 +9,7 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
+    "strict": true,
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
