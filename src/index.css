@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-ochre-50: #fdfbf7;
+  --color-ochre-100: #f2ede4;
+  --color-ochre-200: #ebe4d8;
+  --color-ochre-400: #d4a373;
+  --color-ochre-500: #4a5d4e;
+  --color-ochre-600: #3b4d3f;
+  --color-ochre-700: #bc6c25;
+  --color-ochre-800: #8f4f19;
+  
+  --color-charcoal-50: #fdfbf7;
+  --color-charcoal-100: #f2ede4;
+  --color-charcoal-200: #ebe4d8;
+  --color-charcoal-700: #5c635c;
+  --color-charcoal-800: #3d443d;
+  --color-charcoal-900: #2d332d;
+}
+
+/* Custom scrollbar matching professional layout */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-charcoal-200);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ochre-400);
+}
+
+/* Elegant styles for markdown parser display in App */
+.markdown-body {
+  font-family: var(--font-sans);
+  color: var(--color-charcoal-900);
+  line-height: 1.625;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-charcoal-900);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+.markdown-body h1 { font-size: 1.5rem; border-b: 1px solid var(--color-charcoal-200); padding-bottom: 0.25rem; }
+.markdown-body h2 { font-size: 1.25rem; margin-top: 2rem; color: var(--color-ochre-700); }
+.markdown-body h3 { font-size: 1.1rem; color: var(--color-ochre-500); }
+.markdown-body h4 { font-size: 0.95rem; font-weight: 600; color: var(--color-charcoal-800); }
+.markdown-body p { margin-bottom: 1rem; font-size: 0.875rem; text-align: justify; }
+.markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; font-size: 0.85rem; }
+.markdown-body li { margin-bottom: 0.25rem; }
+.markdown-body code { font-family: var(--font-mono); font-size: 0.775rem; background-color: var(--color-charcoal-100); padding: 0.125rem 0.25rem; border-radius: 0.25rem; }
+.markdown-body pre { background-color: #1e241e; color: #aef0b8; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.75rem; margin-bottom: 1rem; }
+.markdown-body blockquote { border-left: 4px solid var(--color-ochre-400); padding-left: 1rem; color: var(--color-charcoal-700); font-style: italic; margin-bottom: 1rem; }

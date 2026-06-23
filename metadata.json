@@ -1,0 +1,6 @@
+{
+  "name": "Akudha Agri-Logistics Engine",
+  "description": "An offline-first, schema-compliant supply chain and informal distribution management ledger designed for Zimbabwe baobab harvesting, conversion transformation, and vendor consignment logistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
