@@ -3,6 +3,7 @@ import { SYNC_LATENCY_OPTIONS } from '../constants';
 
 interface HeaderProps {
   isOnline: boolean;
+  serverAvailable: boolean;
   pendingCount: number;
   simulatedDelay: number;
   onToggleNetwork: () => void;
@@ -10,7 +11,7 @@ interface HeaderProps {
   onDelayChange: (delay: number) => void;
 }
 
-export function Header({ isOnline, pendingCount, simulatedDelay, onToggleNetwork, onSync, onDelayChange }: HeaderProps) {
+export function Header({ isOnline, serverAvailable, pendingCount, simulatedDelay, onToggleNetwork, onSync, onDelayChange }: HeaderProps) {
   return (
     <header className="border-b border-charcoal-200 bg-charcoal-900 px-6 py-4 text-white" id="header-navbar">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
@@ -39,6 +40,11 @@ export function Header({ isOnline, pendingCount, simulatedDelay, onToggleNetwork
             </span>
             <span className="font-mono text-xs font-bold uppercase tracking-wider">
               {isOnline ? 'Online Sync Active' : 'Offline Queue Mode'}
+            </span>
+            <span className={`hidden sm:inline text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
+              serverAvailable ? 'text-emerald-400 bg-emerald-950/40' : 'text-charcoal-500 bg-charcoal-800'
+            }`}>
+              {serverAvailable ? 'API Live' : 'localStorage'}
             </span>
             <button
               onClick={onToggleNetwork}

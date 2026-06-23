@@ -22,7 +22,7 @@ export function SyncRegistry({ offlineQueue, onClearLogs }: SyncRegistryProps) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ochre-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-ochre-500" />
             </span>
-            <h3 className="font-display font-bold text-charcoal-900 text-sm">Service Worker Sync Registry</h3>
+            <h3 className="font-display font-bold text-charcoal-900 text-sm">Offline Sync Registry</h3>
           </div>
         </div>
 
@@ -78,7 +78,7 @@ export function SyncRegistry({ offlineQueue, onClearLogs }: SyncRegistryProps) {
       <div className="rounded-xl border border-charcoal-200 bg-white p-5 shadow-sm" id="schema-payload-inspector">
         <div className="flex items-center gap-1.5 border-b border-charcoal-100 pb-3 mb-4">
           <FileJson className="h-4 w-4 text-charcoal-700" />
-          <h3 className="font-display font-bold text-charcoal-900 text-sm">Service-Worker Intercepted JSON Payload</h3>
+          <h3 className="font-display font-bold text-charcoal-900 text-sm">Payload Inspector</h3>
         </div>
         {inspectedPayload ? (
           <div className="space-y-3">

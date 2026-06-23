@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogIn, UserCircle, X } from 'lucide-react';
+import { LogIn, UserCircle, X, Lock, Eye, EyeOff } from 'lucide-react';
 import { Role, type UserClaims } from '../../types/auth';
 import { ZIM_REGIONS } from '../../constants';
 
@@ -9,6 +9,8 @@ interface LoginOverlayProps {
   onLogin: (role: Role, region?: string, hubId?: string) => void;
   onClose: () => void;
 }
+
+const DEMO_PIN = '4242';
 
 const ROLE_OPTIONS: { role: Role; label: string; description: string; requiresRegion: boolean }[] = [
   { role: Role.FIELD_COORDINATOR, label: 'Field Coordinator', description: 'Rural collection agent — Chimanimani region', requiresRegion: true },
@@ -20,13 +22,22 @@ const ROLE_OPTIONS: { role: Role; label: string; description: string; requiresRe
 export function LoginOverlay({ open, onLogin, onClose }: LoginOverlayProps) {
   const [selectedRole, setSelectedRole] = useState<Role>(Role.FIELD_COORDINATOR);
   const [selectedRegion, setSelectedRegion] = useState('Chimanimani');
+  const [pin, setPin] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [showPin, setShowPin] = useState(false);
 
   const handleLogin = () => {
+    if (pin !== DEMO_PIN) {
+      setPinError(true);
+      return;
+    }
+    setPinError(false);
     if (selectedRole === Role.FIELD_COORDINATOR) {
       onLogin(selectedRole, selectedRegion);
     } else {
       onLogin(selectedRole);
     }
+    setPin('');
     onClose();
   };
 
@@ -54,7 +65,7 @@ export function LoginOverlay({ open, onLogin, onClose }: LoginOverlayProps) {
                 </div>
                 <div>
                   <h2 className="font-display text-lg font-bold">Akudha Access Portal</h2>
-                  <p className="text-xs text-charcoal-300">Select your operational role to continue</p>
+                  <p className="text-xs text-charcoal-300">Secure demo environment</p>
                 </div>
               </div>
               <button onClick={onClose} className="text-charcoal-400 hover:text-white transition-colors">
@@ -94,6 +105,32 @@ export function LoginOverlay({ open, onLogin, onClose }: LoginOverlayProps) {
                 </div>
               )}
 
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-charcoal-700 uppercase tracking-wider">Demo PIN</label>
+                <div className="relative">
+                  <input
+                    type={showPin ? 'text' : 'password'}
+                    value={pin}
+                    onChange={(e) => { setPin(e.target.value); setPinError(false); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleLogin(); }}
+                    placeholder="Enter demo PIN"
+                    className={`w-full rounded-lg border pl-10 pr-10 py-2 text-sm bg-white focus:outline-none ${
+                      pinError ? 'border-rose-500 ring-1 ring-rose-500' : 'border-charcoal-200 focus:border-ochre-500'
+                    }`}
+                    autoFocus
+                  />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal-400" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPin(!showPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-700"
+                  >
+                    {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {pinError && <p className="text-xs text-rose-600 mt-1">Invalid PIN. Please try again.</p>}
+              </div>
+
               <button
                 onClick={handleLogin}
                 className="w-full flex items-center justify-center gap-2 rounded-lg bg-charcoal-900 py-3 text-sm font-bold text-white hover:bg-ochre-500 hover:text-charcoal-900 transition-all uppercase tracking-wider"
@@ -105,7 +142,7 @@ export function LoginOverlay({ open, onLogin, onClose }: LoginOverlayProps) {
 
             <div className="bg-charcoal-50 px-6 py-3 border-t border-charcoal-200">
               <p className="text-[10px] text-charcoal-500 text-center">
-                Demo mode — no authentication required. Role determines data visibility.
+                Secure demo environment — authorised access only. PIN: 4242
               </p>
             </div>
           </motion.div>

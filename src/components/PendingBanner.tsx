@@ -3,10 +3,11 @@ import { AlertTriangle } from 'lucide-react';
 interface PendingBannerProps {
   pendingCount: number;
   isOnline: boolean;
+  serverAvailable: boolean;
   onSync: () => void;
 }
 
-export function PendingBanner({ pendingCount, isOnline, onSync }: PendingBannerProps) {
+export function PendingBanner({ pendingCount, isOnline, serverAvailable, onSync }: PendingBannerProps) {
   if (pendingCount === 0) return null;
 
   return (
@@ -21,7 +22,7 @@ export function PendingBanner({ pendingCount, isOnline, onSync }: PendingBannerP
       <div className="flex items-center gap-2">
         {isOnline ? (
           <button onClick={onSync} className="rounded-lg bg-ochre-500 px-4 py-2 font-mono text-xs font-bold text-charcoal-900 hover:bg-ochre-600 transition-colors shadow-sm" id="sync-now-banner-button">
-            FORCE SYNCHRONIZATION NOW
+            {serverAvailable ? 'SYNC TO SERVER' : 'COMMIT LOCALLY'}
           </button>
         ) : (
           <span className="rounded bg-amber-200 px-2.5 py-1 font-mono text-[11px] font-bold text-amber-800">NETWORK INTERRUPT: SWITCH ONLINE TO SYNC</span>

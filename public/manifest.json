@@ -1,0 +1,13 @@
+{
+  "name": "Akudha Enterprises",
+  "short_name": "Akudha",
+  "description": "Baobab agri-logistics PWA — sourcing, processing, distribution",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1C1917",
+  "theme_color": "#D97706",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

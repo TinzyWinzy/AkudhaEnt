@@ -52,11 +52,18 @@ export default function App() {
     };
   }, []);
 
+  const [serverAvailable, setServerAvailable] = useState(false);
   const [simulatedDelay, setSimulatedDelay] = useState<number>(DEFAULT_SYNC_DELAY_MS);
   const { logs, addLog } = useLogging([
     { time: new Date().toLocaleTimeString(), text: 'Akudha Agri-Logistics Engine Initialized.', type: 'info' },
     { time: new Date().toLocaleTimeString(), text: `Device is ${navigator.onLine ? 'online' : 'offline'}. Data stored in localStorage.`, type: 'info' }
   ]);
+
+  useEffect(() => {
+    fetch('/api/health')
+      .then(r => { if (r.ok) setServerAvailable(true); })
+      .catch(() => {});
+  }, []);
 
   const inventory = useInventory(syncedHarvests, syncedBatches, syncedConsignments, offlineQueue);
 
@@ -132,6 +139,7 @@ export default function App() {
     <div className="min-h-screen bg-charcoal-50 font-sans text-charcoal-900 selection:bg-ochre-400 selection:text-white">
       <Header
         isOnline={isOnline}
+        serverAvailable={serverAvailable}
         pendingCount={pendingCount}
         simulatedDelay={simulatedDelay}
         onToggleNetwork={() => { setIsOnline(!isOnline); addLog(`Network: Switched to ${!isOnline ? 'OFFLINE' : 'ONLINE'} mode.`, !isOnline ? 'warn' : 'info'); }}
@@ -167,7 +175,7 @@ export default function App() {
           totalSachetsSold={inventory.totalSachetsSold}
         />
 
-        <PendingBanner pendingCount={pendingCount} isOnline={isOnline} onSync={triggerSyncAll} />
+        <PendingBanner pendingCount={pendingCount} isOnline={isOnline} serverAvailable={serverAvailable} onSync={triggerSyncAll} />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="lg:col-span-7 flex flex-col gap-6">
