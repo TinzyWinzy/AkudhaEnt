@@ -1,6 +1,10 @@
-export { HarvesterSourcingModel } from './HarvesterSourcing';
-export type { IHarvesterSourcing } from './HarvesterSourcing';
-export { ProcessingBatchModel } from './ProcessingBatch';
-export type { IProcessingBatch } from './ProcessingBatch';
-export { VendorDispatchModel } from './VendorDispatch';
-export type { IVendorDispatch } from './VendorDispatch';
+export { HarvesterSourcingModel } from './HarvesterSourcing.js';
+export type { IHarvesterSourcing } from './HarvesterSourcing.js';
+export { ProcessingBatchModel } from './ProcessingBatch.js';
+export type { IProcessingBatch } from './ProcessingBatch.js';
+export { VendorDispatchModel } from './VendorDispatch.js';
+export type { IVendorDispatch } from './VendorDispatch.js';
+export { UserModel, USER_ROLES } from './User.js';
+export type { IUser, UserRole } from './User.js';
+export { ProductModel, InventoryLotModel, StockMovementModel, LabelTemplateModel, LabelPrintJobModel, OpsQueueActionModel, LabelArtworkModel } from './Inventory.js';
+export type { IProduct, IInventoryLot, IStockMovement, ILabelTemplate, ILabelPrintJob, IOpsQueueAction, ILabelArtwork } from './Inventory.js';

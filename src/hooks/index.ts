@@ -1,4 +1,4 @@
-export { useLocalStorage } from './useLocalStorage';
+export { useIndexedDbCache } from './useIndexedDbCache';
 export { useInventory } from './useInventory';
 export { useLogging } from './useLogging';
 export type { LogEntry } from './useLogging';
