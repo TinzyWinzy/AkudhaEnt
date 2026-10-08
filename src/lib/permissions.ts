@@ -3,13 +3,13 @@ import type { HarvesterRecord } from '../types/domain';
 
 export const VISIBLE_TABS: Record<string, string[]> = {
   [Role.FIELD_COORDINATOR]: ['harvest', 'backlog'],
-  [Role.PROCESSING_ADMIN]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  [Role.DISTRIBUTION_MANAGER]: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
-  [Role.SUPER_ADMIN]: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
+  [Role.PROCESSING_ADMIN]: ['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai'],
+  [Role.DISTRIBUTION_MANAGER]: ['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai'],
+  [Role.SUPER_ADMIN]: ['inventory', 'harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
 };
 
 const FULL_ACCESS: RolePermissions = {
-  visibleTabs: ['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
+  visibleTabs: ['inventory', 'harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai'],
   sourcingFields: {
     harvester_id: { canCreate: true, canRead: true, canUpdate: true, canDelete: false },
     harvester_name: { canCreate: true, canRead: true, canUpdate: true, canDelete: false },
@@ -55,7 +55,7 @@ const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     distributionFields: {},
   },
   [Role.PROCESSING_ADMIN]: {
-    visibleTabs: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
+    visibleTabs: ['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai'],
     sourcingFields: {
       harvester_id: { canCreate: false, canRead: true, canUpdate: false, canDelete: false },
       harvester_name: { canCreate: false, canRead: true, canUpdate: false, canDelete: false },
@@ -85,7 +85,7 @@ const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     },
   },
   [Role.DISTRIBUTION_MANAGER]: {
-    visibleTabs: ['harvest', 'process', 'distribute', 'backlog', 'ai'],
+    visibleTabs: ['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai'],
     sourcingFields: {},
     processingFields: {
       batch_id: { canCreate: false, canRead: false, canUpdate: false, canDelete: false },

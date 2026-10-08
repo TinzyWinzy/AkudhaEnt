@@ -6,6 +6,10 @@ export enum Role {
 }
 
 export interface UserClaims {
+  id: string;
+  organizationId: string;
+  staffId: string;
+  email?: string;
   role: Role;
   region?: string;
   hubId?: string;

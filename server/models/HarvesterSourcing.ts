@@ -1,6 +1,8 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IHarvesterSourcing extends Document {
+  organizationId: string;
+  actorId: string;
   harvesterId: string;
   name: string;
   region: 'Chimanimani' | 'Mudzi' | 'Binga' | 'Mt Darwin' | 'Chiredzi';
@@ -16,6 +18,8 @@ export interface IHarvesterSourcing extends Document {
 
 const SourcingTransactionSchema = new Schema<IHarvesterSourcing>(
   {
+    organizationId: { type: String, required: true, index: true },
+    actorId: { type: String, required: true },
     harvesterId: { type: String, required: true, index: true, trim: true },
     name: { type: String, required: true, trim: true },
     region: {
@@ -28,10 +32,11 @@ const SourcingTransactionSchema = new Schema<IHarvesterSourcing>(
     qualityGrade: { type: String, required: true, enum: ['A', 'B', 'C'] },
     payoutUsd: { type: Number, required: true },
     offlineCreatedAt: { type: Date, required: true, default: Date.now },
-    syncId: { type: String, required: true, unique: true, index: true, trim: true },
+    syncId: { type: String, required: true, index: true, trim: true },
   },
   { timestamps: true }
 );
+SourcingTransactionSchema.index({ organizationId: 1, syncId: 1 }, { unique: true });
 
 SourcingTransactionSchema.path('payoutUsd').validate(function (this: IHarvesterSourcing, value: number) {
   const minPremium: Record<string, number> = { A: 1.5, B: 1.0, C: 0.7 };
@@ -41,7 +46,7 @@ SourcingTransactionSchema.path('payoutUsd').validate(function (this: IHarvesterS
 
 SourcingTransactionSchema.pre<IHarvesterSourcing>('save', async function () {
   if (this.isNew && this.syncId) {
-    const existing = await (this.constructor as Model<IHarvesterSourcing>).findOne({ syncId: this.syncId });
+    const existing = await (this.constructor as Model<IHarvesterSourcing>).findOne({ organizationId: this.organizationId, syncId: this.syncId });
     if (existing) {
       throw new Error(`IDEMPOTENCY CONFLICT: syncId "${this.syncId}" already exists.`);
     }

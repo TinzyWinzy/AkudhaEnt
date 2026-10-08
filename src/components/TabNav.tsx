@@ -2,9 +2,10 @@ import { Database, Layers, Truck, Settings, BookOpen, Brain } from 'lucide-react
 import { useAuth } from '../hooks/useAuth';
 import { VISIBLE_TABS } from '../lib/permissions';
 
-export type TabId = 'harvest' | 'process' | 'distribute' | 'diagnostics' | 'backlog' | 'schemas' | 'ai';
+export type TabId = 'inventory' | 'harvest' | 'process' | 'distribute' | 'diagnostics' | 'backlog' | 'schemas' | 'ai';
 
 const ALL_TABS: { id: TabId; label: string; icon: typeof Database }[] = [
+  { id: 'inventory', label: 'Inventory', icon: Layers },
   { id: 'harvest', label: 'Sourcing', icon: Database },
   { id: 'process', label: 'Processing', icon: Layers },
   { id: 'distribute', label: 'Logistics', icon: Truck },

@@ -11,17 +11,17 @@ describe('Role Permissions', () => {
 
     it('processing_admin sees Sourcing (read-only), Processing, Logistics, Backlog, AI', () => {
       const perms = getRolePermissions(Role.PROCESSING_ADMIN);
-      expect(perms.visibleTabs).toEqual(['harvest', 'process', 'distribute', 'backlog', 'ai']);
+      expect(perms.visibleTabs).toEqual(['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai']);
     });
 
     it('distribution_manager sees Sourcing, Processing, Logistics, Backlog, AI', () => {
       const perms = getRolePermissions(Role.DISTRIBUTION_MANAGER);
-      expect(perms.visibleTabs).toEqual(['harvest', 'process', 'distribute', 'backlog', 'ai']);
+      expect(perms.visibleTabs).toEqual(['inventory', 'harvest', 'process', 'distribute', 'backlog', 'ai']);
     });
 
     it('super_admin sees all tabs', () => {
       const perms = getRolePermissions(Role.SUPER_ADMIN);
-      expect(perms.visibleTabs).toEqual(['harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai']);
+      expect(perms.visibleTabs).toEqual(['inventory', 'harvest', 'process', 'distribute', 'diagnostics', 'schemas', 'backlog', 'ai']);
     });
   });
 

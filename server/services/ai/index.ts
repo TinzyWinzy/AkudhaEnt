@@ -1,4 +1,4 @@
-export { detectAnomaly, enrichAnomaly } from './anomalyAgent';
-export type { AnomalyInput, AnomalyResult } from './anomalyAgent';
-export { recommendDispatch, enrichDispatchRecommendation } from './hubRouter';
-export type { HubInventory, DispatchRecommendation } from './hubRouter';
+export { detectAnomaly, enrichAnomaly } from './anomalyAgent.js';
+export type { AnomalyInput, AnomalyResult } from './anomalyAgent.js';
+export { recommendDispatch, enrichDispatchRecommendation } from './hubRouter.js';
+export type { HubInventory, DispatchRecommendation } from './hubRouter.js';

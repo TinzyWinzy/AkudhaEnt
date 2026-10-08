@@ -7,3 +7,8 @@ coverage/
 .env*
 !.env.example
 .vercel
+.backups/
+
+test-results/
+playwright-report/
+*.cjs

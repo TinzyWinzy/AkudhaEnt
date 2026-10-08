@@ -1,17 +1,14 @@
-import { Layers, RefreshCw, Wifi, WifiOff } from 'lucide-react';
-import { SYNC_LATENCY_OPTIONS } from '../constants';
+import { Layers, RefreshCw } from 'lucide-react';
 
 interface HeaderProps {
+  localInventory?: boolean;
   isOnline: boolean;
   serverAvailable: boolean;
   pendingCount: number;
-  simulatedDelay: number;
-  onToggleNetwork: () => void;
   onSync: () => void;
-  onDelayChange: (delay: number) => void;
 }
 
-export function Header({ isOnline, serverAvailable, pendingCount, simulatedDelay, onToggleNetwork, onSync, onDelayChange }: HeaderProps) {
+export function Header({ localInventory, isOnline, serverAvailable, pendingCount, onSync }: HeaderProps) {
   return (
     <header className="border-b border-charcoal-200 bg-charcoal-900 px-6 py-4 text-white" id="header-navbar">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
@@ -28,7 +25,7 @@ export function Header({ isOnline, serverAvailable, pendingCount, simulatedDelay
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3" hidden={localInventory} style={localInventory ? { display: 'none' } : undefined}>
           <div className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 transition-colors ${
             isOnline
               ? 'border-emerald-600/30 bg-emerald-950/40 text-emerald-300'
@@ -44,27 +41,9 @@ export function Header({ isOnline, serverAvailable, pendingCount, simulatedDelay
             <span className={`hidden sm:inline text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
               serverAvailable ? 'text-emerald-400 bg-emerald-950/40' : 'text-charcoal-500 bg-charcoal-800'
             }`}>
-              {serverAvailable ? 'API Live' : 'localStorage'}
+              {serverAvailable ? 'API Live' : 'API Offline'}
             </span>
-            <button
-              onClick={onToggleNetwork}
-              className="ml-2 rounded px-2 py-0.5 font-sans text-[10px] font-bold text-white transition-all bg-charcoal-800 hover:bg-ochre-500 hover:text-charcoal-900"
-              id="toggle-network-button"
-            >
-              TOGGLE LIFE
-            </button>
           </div>
-
-          <select
-            value={simulatedDelay}
-            onChange={(e) => onDelayChange(parseInt(e.target.value))}
-            className="rounded border border-charcoal-800 bg-charcoal-800 px-2 py-1 font-mono text-[10px] text-white focus:outline-none"
-            title="Simulated network latency"
-          >
-            {SYNC_LATENCY_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
 
           <button
             onClick={onSync}

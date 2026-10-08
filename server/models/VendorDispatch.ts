@@ -1,6 +1,9 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IVendorDispatch extends Document {
+  organizationId: string;
+  actorId: string;
+  syncId: string;
   dispatchId: string;
   vendorId: string;
   hubLocation: string;
@@ -16,7 +19,10 @@ export interface IVendorDispatch extends Document {
 
 const VendorDispatchSchema = new Schema<IVendorDispatch>(
   {
-    dispatchId: { type: String, required: true, unique: true, index: true, trim: true },
+    organizationId: { type: String, required: true, index: true },
+    actorId: { type: String, required: true },
+    syncId: { type: String, required: true, trim: true },
+    dispatchId: { type: String, required: true, index: true, trim: true },
     vendorId: { type: String, required: true, trim: true },
     hubLocation: { type: String, required: true, trim: true },
     sachetsDispatched: { type: Number, required: true, min: 1 },
@@ -32,6 +38,8 @@ const VendorDispatchSchema = new Schema<IVendorDispatch>(
   },
   { timestamps: true }
 );
+VendorDispatchSchema.index({ organizationId: 1, dispatchId: 1 }, { unique: true });
+VendorDispatchSchema.index({ organizationId: 1, syncId: 1 }, { unique: true });
 
 VendorDispatchSchema.path('sachetsSold').validate(function (this: IVendorDispatch, value: number) {
   return value + this.sachetsReturnedSpoiled <= this.sachetsDispatched;

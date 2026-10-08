@@ -1,6 +1,9 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IProcessingBatch extends Document {
+  organizationId: string;
+  actorId: string;
+  syncId: string;
   batchId: string;
   inputRawWeightKg: number;
   outputSachetCount: number;
@@ -13,7 +16,10 @@ export interface IProcessingBatch extends Document {
 
 const ProcessingBatchSchema = new Schema<IProcessingBatch>(
   {
-    batchId: { type: String, required: true, unique: true, index: true, trim: true },
+    organizationId: { type: String, required: true, index: true },
+    actorId: { type: String, required: true },
+    syncId: { type: String, required: true, trim: true },
+    batchId: { type: String, required: true, index: true, trim: true },
     inputRawWeightKg: { type: Number, required: true, min: 1 },
     outputSachetCount: { type: Number, required: true, min: 0 },
     processingDate: { type: Date, required: true, default: Date.now },
@@ -22,6 +28,8 @@ const ProcessingBatchSchema = new Schema<IProcessingBatch>(
   },
   { timestamps: true }
 );
+ProcessingBatchSchema.index({ organizationId: 1, batchId: 1 }, { unique: true });
+ProcessingBatchSchema.index({ organizationId: 1, syncId: 1 }, { unique: true });
 
 ProcessingBatchSchema.pre<IProcessingBatch>('save', function () {
   const actualRatio = this.outputSachetCount / this.inputRawWeightKg;

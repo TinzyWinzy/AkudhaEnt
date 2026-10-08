@@ -1,25 +1,22 @@
-import express from 'express';
-import cors from 'cors';
-import apiRouter from './app';
-import { env, validateEnv } from './config/env';
-import { connectDatabase } from './config/db';
+import { env, validateEnv } from './config/env.js';
+import { ensureBackendReady } from './config/startup.js';
+import { createHttpApp } from './http.js';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use('/api', apiRouter);
+const app = createHttpApp();
 
 async function start() {
   const missing = validateEnv();
   if (missing.length > 0) {
-    console.warn(`[Server] Missing env vars: ${missing.join(', ')}. Running in localStorage-only mode.`);
+    const message = `[Server] Missing env vars: ${missing.join(', ')}.`;
+    if (env.NODE_ENV === 'production') throw Error(message);
+    console.warn(message);
   }
 
-  await connectDatabase();
+  await ensureBackendReady();
 
   app.listen(env.PORT, () => {
     console.log(`[Server] Akudha API running on http://localhost:${env.PORT}/api`);
-    console.log(`[Server] Mode: ${env.USE_DATABASE ? 'with MongoDB' : 'localStorage-only (no DB)'}`);
+    console.log(`[Server] Mode: ${env.USE_DATABASE ? 'with MongoDB' : 'offline-development (no DB)'}`);
   });
 }
 

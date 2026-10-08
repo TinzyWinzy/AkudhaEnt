@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 export interface HubInventory {
   hubId: string;
@@ -80,7 +80,7 @@ Focus on real Zimbabwe informal market considerations (avoiding stockouts, manag
 Prefix each point with a brief emoji indicator.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: env.GEMINI_MODEL,
       contents: prompt,
     });
 

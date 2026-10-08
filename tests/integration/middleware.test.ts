@@ -45,9 +45,9 @@ describe('Auth Middleware', () => {
     expect(res.status).toBe(401);
   });
 
-  it('allows operations_manager when included in roles', async () => {
+  it('rejects an unknown role header', async () => {
     const res = await request(app).get('/api/field').set('X-Akudha-Role', 'operations_manager');
     // operations_manager is not in ['field_coordinator', 'super_admin']
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 });

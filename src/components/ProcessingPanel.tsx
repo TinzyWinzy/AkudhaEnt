@@ -35,7 +35,7 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
     const sachets = parseInt(sachetsProduced);
 
     if (isNaN(rawInput) || isNaN(sachets) || rawInput <= 0 || sachets < 0) {
-      setFormError('State mutation rejected: Weight and sachet production must be positive numeric values.');
+      setFormError('Enter a positive pulp weight and a valid sachet quantity.');
       return;
     }
 
@@ -53,7 +53,7 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
       date_processed: new Date().toISOString().split('T')[0],
       idempotent_uuid: `proc_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`,
       offline_created_at: new Date().toISOString(),
-      is_synced: isOnline,
+      is_synced: false,
       yield_ratio: yieldResult.ratio,
       is_anomalous: yieldResult.isAnomalous,
       waste_percentage: yieldResult.wastePercentage,
@@ -116,8 +116,8 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
   return (
     <div id="processing-bridge-panel">
       <div className="mb-6">
-        <h3 className="font-display text-lg font-bold text-charcoal-900">Physical Sachet Conversion (The Transformation Bridge)</h3>
-        <p className="text-xs text-charcoal-700">Govern the physical conversion of raw baobab pulp inventory into consumer sachet beverage stocks.</p>
+        <h3 className="font-display text-lg font-bold text-charcoal-900">Record processing output</h3>
+        <p className="text-sm text-charcoal-700">Convert available baobab pulp into finished sachets and review the calculated yield.</p>
       </div>
 
       {canCreate && (
@@ -131,7 +131,7 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
                 exit={{ opacity: 0 }}
               >
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                <div><span className="font-bold">CONVERSION REFUSED:</span> {formError}</div>
+                <div><span className="font-bold">Batch not saved:</span> {formError}</div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -188,14 +188,15 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
           <button type="submit"
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-charcoal-900 py-3 text-xs font-bold text-white hover:bg-ochre-500 hover:text-charcoal-900 transition-all uppercase tracking-wider">
             <Plus className="h-4 w-4" />
-            Commit Processing Batch to {isOnline ? 'Direct Cloud Ledger' : 'Local Offline Queue'}
+            Record processing batch
           </button>
         </form>
       )}
 
       <div className="mt-8">
-        <h4 className="font-display font-semibold text-charcoal-900 mb-4">Historical Processing Batches</h4>
-        <div className="overflow-x-auto rounded-lg border border-charcoal-200">
+        <h4 className="font-display font-semibold text-charcoal-900 mb-4">Recent processing batches</h4>
+        <div className="ops-mobile-records" aria-label="Processing batch records">{syncedBatches.map(b => <article className="ops-record-card" key={b.idempotent_uuid}><div className="ops-record-card__top"><strong>{b.batch_id}</strong><span className={b.is_synced ? 'is-saved' : 'is-pending'}>{b.is_synced ? 'Saved' : 'Waiting to sync'}</span></div><dl><div><dt>Raw pulp</dt><dd>{b.raw_weight_kg.toFixed(1)} kg</dd></div><div><dt>Output</dt><dd>{b.total_175ml_sachets_produced} sachets</dd></div><PermissionGate panel="processing" field="yield_ratio"><div><dt>Yield</dt><dd>{b.yield_ratio} / kg</dd></div></PermissionGate><div><dt>Processed</dt><dd>{b.date_processed}</dd></div></dl>{b.is_anomalous && <p className="ops-record-card__alert">Yield variance needs processing review</p>}</article>)}</div>
+        <div className="ops-desktop-table overflow-x-auto rounded-lg border border-charcoal-200">
           <table className="w-full text-left text-xs">
             <thead className="bg-charcoal-50 text-charcoal-900 uppercase font-mono tracking-widest text-[10px]">
               <tr><th className="px-4 py-3">Batch ID</th><th className="px-4 py-3">Raw</th><th className="px-4 py-3">Sachets</th><PermissionGate panel="processing" field="yield_ratio"><th className="px-4 py-3">Yield</th></PermissionGate><PermissionGate panel="processing" field="waste_percentage"><th className="px-4 py-3">Waste</th></PermissionGate><th className="px-4 py-3">Status</th></tr>
@@ -219,7 +220,7 @@ export function ProcessingPanel({ syncedBatches, rawPulpStockKg, isOnline, onAdd
                   <td className="px-4 py-3">
                     <span className={`flex items-center gap-1 font-mono text-[10px] uppercase font-semibold ${b.is_synced ? 'text-emerald-500' : 'text-amber-500'}`}>
                       <span className={`h-1.5 w-1.5 rounded-full ${b.is_synced ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                      {b.is_synced ? 'Synced' : 'Offline'}
+                      {b.is_synced ? 'Saved' : 'Waiting to sync'}
                     </span>
                   </td>
                 </tr>

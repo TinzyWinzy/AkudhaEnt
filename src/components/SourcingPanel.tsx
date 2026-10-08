@@ -54,8 +54,8 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
     const p = parseFloat(payout);
 
     if (!harvesterId || !region || isNaN(w) || isNaN(p)) {
-      setFormError('State mutation rejected: Incomplete transaction data.');
-      onAddLog('Validation Failure: Harvest transaction is missing mandated fields.', 'error');
+      setFormError('Complete the harvester, region, weight and payout fields.');
+      onAddLog('Harvest could not be saved because required details were missing.', 'error');
       return;
     }
     if (w <= 0) {
@@ -65,7 +65,7 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
 
     const { valid, deficit, minimumRequired } = validateEthicalPayout(w, grade, p);
     if (!valid) {
-      setFormError(`ETHICAL AUDIT FAILED: Payout ($${p.toFixed(2)} USD) is below the ethical premium floor in Zimbabwe for Grade ${grade} ($${minimumRequired.toFixed(2)} USD). Minimum missing stipend: $${deficit.toFixed(2)} USD.`);
+      setFormError(`Increase the payout by $${deficit.toFixed(2)}. Grade ${grade} at this weight requires at least $${minimumRequired.toFixed(2)}.`);
       onAddLog(`Validation Error: Harvester payout does not meet ethical minimum. Payout rejected.`, 'error');
       return;
     }
@@ -79,7 +79,7 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
       payout_amount_usd: p,
       idempotent_uuid: `harv_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`,
       offline_created_at: new Date().toISOString(),
-      is_synced: isOnline,
+      is_synced: false,
     };
 
     if (isOnline) {
@@ -105,11 +105,11 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
   return (
     <div id="harvest-ledger-panel">
       <div className="mb-6">
-        <h3 className="font-display text-lg font-bold text-charcoal-900">Inbound Baobab Sourcing (The Harvester Ledger)</h3>
+        <h3 className="font-display text-lg font-bold text-charcoal-900">Record sourced baobab</h3>
         <p className="text-xs text-charcoal-700">
           {isProcessingOnly
             ? 'Read-only view of sourcing weights. Payout data is restricted.'
-            : 'Record premium raw baobab fruit collections directly from rural regions in Zimbabwe.'}
+            : 'Capture the harvester, origin, quality, weight and ethical payout.'}
         </p>
       </div>
 
@@ -125,7 +125,7 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
               >
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold">TRANSACTION REFUSED:</span> {formError}
+                  <span className="font-bold">Harvest not saved:</span> {formError}
                 </div>
               </motion.div>
             )}
@@ -203,7 +203,7 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
           <button type="submit"
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-charcoal-900 py-3 text-xs font-bold text-white hover:bg-ochre-500 hover:text-charcoal-900 transition-all uppercase tracking-wider">
             <Plus className="h-4 w-4" />
-            Commit Raw Harvest to {isOnline ? 'Direct Cloud Ledger' : 'Local Offline Queue'}
+            Record harvest
           </button>
         </form>
       )}
@@ -220,10 +220,11 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
 
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="font-display font-semibold text-charcoal-900">Recent Harvest Logs</h4>
-          <span className="text-slate-500 font-mono text-[11px]">Database Count: {syncedHarvests.length} records</span>
+          <h4 className="font-display font-semibold text-charcoal-900">Recent harvests</h4>
+          <span className="text-slate-500 text-sm">{syncedHarvests.length} records</span>
         </div>
-        <div className="overflow-x-auto rounded-lg border border-charcoal-200">
+        <div className="ops-mobile-records" aria-label="Recent harvest records">{syncedHarvests.map(h => <RegionMask key={h.idempotent_uuid} recordRegion={h.region}><article className="ops-record-card"><div className="ops-record-card__top"><strong>{h.idempotent_uuid.substring(0, 8).toUpperCase()}</strong><span className={h.is_synced ? 'is-saved' : 'is-pending'}>{h.is_synced ? 'Saved' : 'Waiting to sync'}</span></div><dl><div><dt>Harvester</dt><dd>{h.harvester_name}</dd></div><div><dt>Region</dt><dd>{h.region}</dd></div><div><dt>Weight</dt><dd>{h.raw_weight_kg.toFixed(1)} kg</dd></div><div><dt>Quality</dt><dd>Grade {h.quality_grade}</dd></div><PermissionGate panel="sourcing" field="payout_amount_usd"><div><dt>Payout</dt><dd>${h.payout_amount_usd.toFixed(2)}</dd></div></PermissionGate><div><dt>Recorded</dt><dd>{new Date(h.offline_created_at).toLocaleDateString()}</dd></div></dl></article></RegionMask>)}</div>
+        <div className="ops-desktop-table overflow-x-auto rounded-lg border border-charcoal-200">
           <table className="w-full text-left text-xs">
             <thead className="bg-charcoal-50 text-charcoal-900 uppercase font-mono tracking-widest text-[10px]">
               <tr>
@@ -255,7 +256,7 @@ export function SourcingPanel({ syncedHarvests, isOnline, onAddHarvest, onQueueO
                     <td className="px-4 py-3">
                       <span className={`flex items-center gap-1 font-mono text-[10px] uppercase font-semibold ${h.is_synced ? 'text-emerald-500' : 'text-amber-500'}`}>
                         <span className={`h-1.5 w-1.5 rounded-full ${h.is_synced ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                        {h.is_synced ? 'Cloud' : 'Cached'}
+                        {h.is_synced ? 'Saved' : 'Waiting to sync'}
                       </span>
                     </td>
                   </RegionMask>

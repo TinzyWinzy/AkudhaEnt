@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 export interface AnomalyInput {
   region: string;
@@ -70,7 +70,7 @@ Keep each point to 1 sentence. Focus on practical issues relevant to rural Zimba
 Prefix each point with a brief emoji indicator.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: env.GEMINI_MODEL,
       contents: prompt,
     });
 

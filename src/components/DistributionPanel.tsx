@@ -70,7 +70,7 @@ export function DistributionPanel({ syncedConsignments, processedSachetsStock, i
       sachets_sold: s,
       idempotent_uuid: `cons_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`,
       offline_created_at: new Date().toISOString(),
-      is_synced: isOnline,
+      is_synced: false,
     };
 
     if (isOnline) {
@@ -130,8 +130,8 @@ export function DistributionPanel({ syncedConsignments, processedSachetsStock, i
   return (
     <div id="vendor-hub-panel">
       <div className="mb-6">
-        <h3 className="font-display text-lg font-bold text-charcoal-900">Consignment Sachet Ledger (The Vendor Hub)</h3>
-        <p className="text-xs text-charcoal-700">Manage outbound consignment flow of baobab drinks assigned to the network of informal micro-vendors.</p>
+        <h3 className="font-display text-lg font-bold text-charcoal-900">Create vendor consignment</h3>
+        <p className="text-sm text-charcoal-700">Assign finished sachets to a vendor and record sales, returns and margin.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4" id="distribution-consignment-form">
@@ -144,7 +144,7 @@ export function DistributionPanel({ syncedConsignments, processedSachetsStock, i
               exit={{ opacity: 0 }}
             >
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-              <div><span className="font-bold">DISPATCH REFUSED:</span> {formError}</div>
+              <div><span className="font-bold">Consignment not saved:</span> {formError}</div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -221,14 +221,15 @@ export function DistributionPanel({ syncedConsignments, processedSachetsStock, i
           <button type="submit"
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-charcoal-900 py-3 text-xs font-bold text-white hover:bg-ochre-500 hover:text-charcoal-900 transition-all uppercase tracking-wider">
             <Plus className="h-4 w-4" />
-            Commit Consignment Ledger to {isOnline ? 'Direct Cloud Ledger' : 'Local Offline Queue'}
+            Record consignment
           </button>
         )}
       </form>
 
       <div className="mt-8">
-        <h4 className="font-display font-semibold text-charcoal-900 mb-4">Current Active Consignment Flow</h4>
-        <div className="overflow-x-auto rounded-lg border border-charcoal-200">
+        <h4 className="font-display font-semibold text-charcoal-900 mb-4">Recent consignments</h4>
+        <div className="ops-mobile-records" aria-label="Consignment records">{syncedConsignments.map(c => { const profit = (c.sachets_sold * 0.25) - (c.sachets_returned_spoiled * 0.25); return <article className="ops-record-card" key={c.idempotent_uuid}><div className="ops-record-card__top"><strong>{c.consignment_id}</strong><span className={c.is_synced ? 'is-saved' : 'is-pending'}>{c.is_synced ? 'Saved' : 'Waiting to sync'}</span></div><dl><div><dt>Vendor</dt><dd>{c.vendor_name}</dd></div><div><dt>Hub</dt><dd>{c.hub_id}</dd></div><div><dt>Dispatched</dt><dd>{c.sachets_dispatched}</dd></div><div><dt>Sold / returned</dt><dd>{c.sachets_sold} / {c.sachets_returned_spoiled}</dd></div><PermissionGate panel="distribution" field="netVendorMarginUsd"><div><dt>Vendor margin</dt><dd>${profit.toFixed(2)}</dd></div></PermissionGate><div><dt>Recorded</dt><dd>{new Date(c.offline_created_at).toLocaleDateString()}</dd></div></dl>{profit < 6 && <p className="ops-record-card__alert">Vendor margin is below the daily target</p>}</article>})}</div>
+        <div className="ops-desktop-table overflow-x-auto rounded-lg border border-charcoal-200">
           <table className="w-full text-left text-xs">
             <thead className="bg-charcoal-50 text-charcoal-900 uppercase font-mono tracking-widest text-[10px]">
               <tr><th className="px-4 py-3">ID</th><th className="px-4 py-3">Vendor</th><th className="px-4 py-3">Dispatched</th><th className="px-4 py-3">Returns</th><th className="px-4 py-3">Sold</th><PermissionGate panel="distribution" field="netVendorMarginUsd"><th className="px-4 py-3">Margin</th></PermissionGate><th className="px-4 py-3">State</th></tr>
@@ -249,7 +250,7 @@ export function DistributionPanel({ syncedConsignments, processedSachetsStock, i
                     <td className="px-4 py-3">
                       <span className={`flex items-center gap-1 font-mono text-[10px] uppercase font-semibold ${c.is_synced ? 'text-emerald-500' : 'text-amber-500'}`}>
                         <span className={`h-1.5 w-1.5 rounded-full ${c.is_synced ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                        {c.is_synced ? 'Synced' : 'Offline'}
+                        {c.is_synced ? 'Saved' : 'Waiting to sync'}
                       </span>
                     </td>
                   </tr>

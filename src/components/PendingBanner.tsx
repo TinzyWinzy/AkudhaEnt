@@ -22,7 +22,7 @@ export function PendingBanner({ pendingCount, isOnline, serverAvailable, onSync 
       <div className="flex items-center gap-2">
         {isOnline ? (
           <button onClick={onSync} className="rounded-lg bg-ochre-500 px-4 py-2 font-mono text-xs font-bold text-charcoal-900 hover:bg-ochre-600 transition-colors shadow-sm" id="sync-now-banner-button">
-            {serverAvailable ? 'SYNC TO SERVER' : 'COMMIT LOCALLY'}
+            {serverAvailable ? 'SYNC TO SERVER' : 'RETRY SERVER'}
           </button>
         ) : (
           <span className="rounded bg-amber-200 px-2.5 py-1 font-mono text-[11px] font-bold text-amber-800">NETWORK INTERRUPT: SWITCH ONLINE TO SYNC</span>
